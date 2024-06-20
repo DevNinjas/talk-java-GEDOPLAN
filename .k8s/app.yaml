@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: app
     app.kubernetes.io/instance: app
-    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/version: "1.1.0"
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: nico
 spec:
@@ -20,17 +20,35 @@ spec:
       labels:
         app.kubernetes.io/name: app
         app.kubernetes.io/instance: app
-        app.kubernetes.io/version: "1.0.0"
+        app.kubernetes.io/version: "1.1.0"
         app.kubernetes.io/managed-by: kustomize
         app.kubernetes.io/created-by: nico
     spec:
       containers:
       - name: app
-        image: docker.io/snic/helloworld:1.0.0
+        image: docker.io/snic/helloworld:1.1.0
+        imagePullPolicy: Always
         ports:
         - name: http
           containerPort: 8080
           protocol: TCP
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                  fieldPath: spec.nodeName
         livenessProbe:
           httpGet:
             path: /

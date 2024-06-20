@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: app
     app.kubernetes.io/instance: app
-    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/version: "1.1.0"
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: nico
 spec:
