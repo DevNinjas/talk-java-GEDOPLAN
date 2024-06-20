@@ -1,36 +1,39 @@
 # Build Stage
-# Verwenden Sie das offizielle Maven 3.8 mit OpenJDK 17 Image als Basisimage für den Build
+# Verwenden das offizielle Maven 3.8 mit OpenJDK 17 Image als Basisimage für den Build
 FROM maven:3.8-openjdk-17 AS build
 
-# Setzen Sie das Arbeitsverzeichnis im Container
+# Setzen das Arbeitsverzeichnis im Container
 WORKDIR /app
 
-# Kopieren Sie die Maven-Wrapper-Dateien und die pom.xml
+# Kopieren die Maven-Wrapper-Dateien und die pom.xml
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Installieren Sie die Maven-Abhängigkeiten ohne Tests auszuführen
+# Installieren die Maven-Abhängigkeiten ohne Tests auszuführen
 RUN ./mvnw dependency:go-offline
 
-# Kopieren Sie den Rest des Projekts
+# Kopieren den Rest des Projekts
 COPY . .
 
-# Bauen Sie das Projekt ohne Tests
+# Bauen das Projekt ohne Tests
 RUN ./mvnw clean install -DskipTests
 
 # App Stage
-# Verwenden Sie das offizielle OpenJDK 17 Slim Image als Basisimage für den Laufzeitcontainer
-FROM openjdk:17-jdk-slim
+# Verwenden das offizielle OpenJDK 17 Slim Image als Basisimage für den Laufzeitcontainer
+FROM gcr.io/distroless/java17-debian12:nonroot
 
-# Setzen Sie das Arbeitsverzeichnis im Container
+# Setzen das Benutzer auf nonroot
+USER nonroot
+
+# Setzen das Arbeitsverzeichnis im Container
 WORKDIR /app
 
-# Kopieren Sie die gebaute JAR-Datei aus dem vorherigen Build-Stage
-COPY --from=build /app/target/*.jar app.jar
+# Kopieren die gebaute JAR-Datei aus dem vorherigen Build-Stage und benennen Sie sie in app.jar um
+COPY --from=build --chown=nonroot /app/target/*.jar app.jar
 
-# Exponieren Sie den Port, auf dem die Anwendung läuft
+# Exponieren den Port, auf dem die Anwendung läuft
 EXPOSE 8080
 
-# Definieren Sie den Befehl zum Ausführen der JAR-Datei
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Definieren den Befehl zum Ausführen der JAR-Datei
+CMD ["app.jar"]
