@@ -10,7 +10,9 @@ metadata:
       app.kubernetes.io/managed-by: kustomize
       app.kubernetes.io/created-by: nico
   annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   rules:
     - host: app.k8sw.devninjas.io
@@ -23,3 +25,7 @@ spec:
                   name: http
             path: /
             pathType: Prefix
+  tls:
+    - hosts:
+        - app.k8sw.devninjas.io
+      secretName: app-tls
