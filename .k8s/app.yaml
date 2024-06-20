@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+  namespace: app
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/instance: app
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: nico
+spec:
+  containers:
+  - name: app
+    image: docker.io/snic/helloworld:1.0.0
+    ports:
+    - name: http
+      containerPort: 8080
+      protocol: TCP
