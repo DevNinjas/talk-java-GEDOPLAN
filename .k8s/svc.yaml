@@ -10,13 +10,12 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: nico
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: http
       port: 8080
       protocol: TCP
       targetPort: http
-      nodePort: 30000
   selector:
     app.kubernetes.io/name: app
     app.kubernetes.io/instance: app
